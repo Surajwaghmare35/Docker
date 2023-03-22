@@ -1,0 +1,46 @@
+# Note: we can use "hostPath" in PV as defined in doc. iff having 1-WM-node setup
+# its use for local testing of PV on minikube
+
+# Creatinga persistant-volume
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: host-pv
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  # alt: Block
+  accessModes:
+    - ReadWriteOnce
+    # multi. pod on 1-node have RW-access
+
+    # - ReadOnlyMany
+    # multi. pod on diff-node have R-access
+
+    # - ReadWriteMany
+    # multi. pod on diff-node have RW-access
+
+  storageClassName: standard
+  hostPath:
+    path: /tmp
+    # hard-coded local path
+    type: DirectoryOrCreate
+
+---
+# Creatinga persistant-volume-claim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: host-pvc
+spec:
+  volumeName: host-pv
+  # here defining above pv to claim it.
+
+  resources:
+    requests:
+      storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard

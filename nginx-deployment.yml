@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+# above we specify k8s api-version
+kind: Deployment
+# above we define k8s obj.
+metadata:
+  name: nginx
+  # we define name of k8s deployment obj.
+
+# now we defining spec of deployment obj.
+spec:
+  replicas: 1
+  # this will create 1 pod as template-spec.
+  selector:
+    # matchExpressions:
+    #   - { key: app, operator: In, values: [web-server] }
+
+    matchLabels:
+      app: web-server
+    # here we specify which pods is contl. this deployment
+    # by using pods key=value pair.
+
+  # now we defining pods specific details of deployment obj.
+  template:
+    metadata:
+      labels:
+        app: web-server
+        # above we define pods key=value pair which will used by deployment
+
+    # now we set pods spec. conf. of deployment obj.
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          imagePullPolicy: Always
