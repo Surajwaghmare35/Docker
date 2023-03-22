@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  # above is any name u can define to service
+  labels:
+    group: webserver
+
+spec:
+  selector:
+    app: web-server
+    # above we specify key-valuse pair of pods
+    # which is a part of deployment & its ctrl. by service obj.
+  ports:
+    - protocol: "TCP"
+      port: 8080
+      # local port to access
+      targetPort: 80
+      # container port
+  type: LoadBalancer
+  #  Exposes the Service externally using a cloud provider's load balancer
+
+  # type: ClusterIP
+
+  # Exposes the Service on a cluster-internal IP.
+  # Choosing this value makes the Service only reachable from within the cluster.
+  # This is the default that is used if you don't explicitly specify a type for a Service.
+
+  # type: NodePort
+
+  # Exposes the Service on each Node's IP at a static port (the NodePort).
+  # To make the node port available, Kubernetes sets up a cluster IP address,
+  # the same as if you had requested a Service of type: ClusterIP.
+
+---
+apiVersion: apps/v1
+# above we specify k8s api-version
+kind: Deployment
+# above we define k8s obj.
+metadata:
+  name: nginx
+  # we define name of k8s deployment obj.
+  labels:
+    group: webserver
+    # to group all obj. in one we define lables
+    # which helps to delete all ojb of 1-group
+    # as:(kubectl delete  deployments,services -l group=webserver)
+
+# now we defining spec of deployment obj.
+spec:
+  replicas: 1
+  selector:
+    matchExpressions:
+      - { key: app, operator: In, values: [web-server] }
+
+    # matchLabels:
+    #   app: web-server
+    # here we specify which pods is contl. this deployment
+    # by using pods key=value pair.
+
+  # now we defining pods specific details of deployment obj.
+  template:
+    metadata:
+      labels:
+        app: web-server
+        # above we define pods key=value pair which will used by deployment
+
+    # now we set pods spec. conf. of deployment obj.
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          imagePullPolicy: Always
+          # it will pull always latest img.
+
+          env:
+            - name: CONTAINER_DIR
+              # value: "/usr/share/nginx/html"
+              valueFrom:
+                configMapKeyRef:
+                  name: nginx-data-path
+                  key: nginx_data_dir
+
+          # livenessProbe:
+          #   httpGet:
+          #     scheme: HTTP
+          #     path: "/usr/share/nginx/html/index.html"
+          #     port: 80
+          #   initialDelaySeconds: 10
+          #   periodSeconds: 3
+
+          volumeMounts:
+            - mountPath: /tmp
+              # container path
+              name: host-pv
+      volumes:
+        - name: host-pv
+
+          # emptyDir: {}
+          # #create a new emptyDir per/pod & attach it.
+
+          # hostPath:
+          #   path: /data
+          #   type: DirectoryOrCreate
+          #   # it create a dir on Host m/c & mul.Pod share its data at same path
+          #   #  attach to mul.Pod at-a-time
+
+          persistentVolumeClaim:
+            claimName: host-pvc

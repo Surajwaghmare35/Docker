@@ -1,0 +1,30 @@
+# version: 'version'
+version: "3.8"
+# services contain nested values of at least one or many chield i.e container's
+services:
+  jenkins:
+    #image: imageName
+    image: "jenkins/jenkins:lts"
+    stdin_open: true
+    tty: true
+    # command: apt-get update && apt-get upgrade -y
+    container_name: jenkins1
+    # volumes:
+    #   - volumeName:containerPath:mode //named-vol syntax
+    #   - hostPath:containerPath:ro
+    volumes:
+      - ./jenkins:/var/jenkins_home
+    # its a bind-mount
+
+    # note: we don't need to create network, by default it's created by compose
+    # for all services defined in this file.
+
+    ports:
+      - "8080:8080/tcp"
+      - "50000:50000/tcp"
+
+    # below we r mentioning all named vol., this syntax req. for compose
+    # for annoy & bind-mounts Vol no need to specify
+
+    # volumes:
+    #   data:

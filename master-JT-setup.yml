@@ -1,0 +1,58 @@
+# version: 'version'
+version: "3.8"
+# services contain nested values of at least one or many chield i.e container's
+services:
+  jenkins:
+    #image: imageName
+    image: "jenkins/jenkins"
+    stdin_open: true
+    tty: true
+    # command: apt-get update && apt-get upgrade -y; \
+    #   apt-get install iputils-ping -y
+    container_name: jenkins1
+    # volumes:
+    #   - volumeName:containerPath:mode //named-vol syntax
+    #   - hostPath:containerPath:ro
+    volumes:
+      - jenkins:/var/jenkins_home
+    # its a named-vol
+    ports:
+      - "8080:8080/tcp"
+      - "50000:50000/tcp"
+
+  tomcat:
+    #image: imageName
+    image: "bitnami/tomcat"
+    stdin_open: true
+    tty: true
+    # entrypoint: ["catalina.sh", "run"]
+    # command: "catalina.sh run"
+    container_name: tomcat1
+    # volumes:
+    #   - volumeName:containerPath:mode //named-vol syntax
+    #   - hostPath:containerPath:ro
+    volumes:
+      - tomcat:/opt/bitnami/tomcat/webapps
+      # above path having default webpage
+      # its a named-vol
+
+      # - ./tomcat-webapps:/opt/bitnami/tomcat/webapps
+      # its a bind-vol
+      # but above will overrite webapp data from local
+
+      # it contain sample.war file which we get from
+      # https://tomcat.apache.org/tomcat-10.1-doc/appdev/sample/sample.war
+
+    environment:
+      # - TOMCAT_USERNAME=manager
+      # - TOMCAT_PASSWORD=manager
+      - ALLOW_EMPTY_PASSWORD=yes
+
+    ports:
+      - "8888:8080/tcp"
+
+    # below in service line, we r mentioning all named vol., this syntax req. for compose
+    # for annoy & bind-mounts Vol no need to specify
+volumes:
+  jenkins:
+  tomcat:

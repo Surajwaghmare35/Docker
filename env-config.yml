@@ -1,0 +1,7 @@
+# we use this resource to create an env var key-value pair
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-data-path
+data:
+  nginx_data_dir: "/usr/share/nginx/html"

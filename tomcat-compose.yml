@@ -1,0 +1,40 @@
+# version: 'version'
+version: "3.8"
+# services contain nested values of at least one or many chield i.e container's
+services:
+  tomcat:
+    #image: imageName
+    image: "bitnami/tomcat"
+    stdin_open: true
+    tty: true
+    # command: "catalina.sh run"
+    # entrypoint: ["catalina.sh", "run"]
+    container_name: tomcat1
+    # volumes:
+    #   - volumeName:containerPath:mode //named-vol syntax
+    #   - hostPath:containerPath:ro
+    volumes:
+      - tomcat:/opt/bitnami/tomcat/webapps
+      # its a named-vol
+
+      # - ./tomcat-webapps:/opt/bitnami/tomcat/webapps
+      # its a bind-vol
+
+      # it contain sample.war file which we get from
+      # https://tomcat.apache.org/tomcat-10.1-doc/appdev/sample/sample.war
+
+    environment:
+      # - TOMCAT_USERNAME=manager
+      # - TOMCAT_PASSWORD=manager
+      - ALLOW_EMPTY_PASSWORD=yes
+
+    # note: we don't need to create network, by default it's created by compose
+    # for all services defined in this file.
+
+    ports:
+      - "8888:8080/tcp"
+
+    # below in service line, we r mentioning all named vol., this syntax req. for compose
+    # for annoy & bind-mounts Vol no need to specify
+volumes:
+  tomcat:

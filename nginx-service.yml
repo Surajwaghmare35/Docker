@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  # above is any name u can define to service
+spec:
+  selector:
+    app: web-server
+    # above we specify key-valuse pair of pods
+    # which is a part of deployment & its ctrl. by sevice obj.
+  ports:
+    - protocol: "TCP"
+      port: 8080
+      # local port to access
+      targetPort: 80
+      # container port
+  type: LoadBalancer

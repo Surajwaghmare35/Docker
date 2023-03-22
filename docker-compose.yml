@@ -1,0 +1,61 @@
+# version: 'version'
+version: "3.8"
+# services contain nested values of at least one or many chield i.e container's
+services:
+  ubuntu:
+    #image: imageName
+    image: 'ubuntu'
+    stdin_open: true
+    tty: true
+    # command: apt-get update && apt-get upgrade -y
+    container_name: ubuntu1
+    # volumes:
+    #   - volumeName:containerPath:mode //named-vol syntax
+    #   - hostPath:containerPath:ro
+    #volumes:
+    # - data:/mnt/db
+    # its a named vol
+
+    # - .:/mnt/db
+    # its a bind-mount
+
+    #   - /mnt/db
+    # its a annoy Vol.
+ 
+    # environment:
+    #   - name=value
+    # environment:
+    #   - PORT=80
+
+    # env_file:
+    #   - Rel-path-fileName
+    # env_file:
+    #   - ./ubuntu.env
+
+    # note: we don't need to create network, by default it's created by compose
+    # for all services defined in this file.  
+
+  nginx:
+    image: 'nginx'
+    # build: path-of-dir contain Dockerfile
+    # build: $PWD
+    container_name: nginx1
+
+    # build:
+    #   context: ./
+    #   dockerfile: Dockerfile
+    #   args:
+    #     DEFAULT_PORT: 80
+    command: [nginx, '-g', 'daemon off;']
+    ports:
+      - 8080:80
+    #  - "8080:$DEFAULT_PORT/tcp"
+    # depends_on:
+    #   # - serviceName //EX: ubuntu
+    #   - ubuntu
+
+    # below service we r mentioning all named vol., this syntax req. for compose
+    # for annoy & bind-mounts Vol no need to specify
+    # volumes:
+    #   data:
+ 
